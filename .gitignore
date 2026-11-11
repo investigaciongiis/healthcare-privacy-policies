@@ -1,0 +1,58 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Environment variables / API keys
+.env
+*.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Claude Code local settings
+.claude/settings.local.json
+
+# Logs (optionally keep batch outputs)
+*.log
+
+# Large generated datasets: exclude reproducible chunks and batch logs.
+data1/chunks/
+data1/audits_pre_session9/
+data1/audits_lg/
+data1/e1_results_lg/
+data1/policies_raw/
+data1/policies_text/
+data1/e4_texts/
+data1/opp115_policies/
+
+# OPP-115 corpus (~95 MB) — public dataset available from:
+# https://usableprivacy.org/data (OPP-115 Corpus v1.0)
+docs/OPP-115_v1_0.zip
+docs/OPP-115/
+
+# PDF files and academic documentation are not source code
+docs/estadodelarteycitas/
+docs/reduccion/
+docs/comentarios1.fdf
+docs/TFG_PLANTILLA__Copy_1/

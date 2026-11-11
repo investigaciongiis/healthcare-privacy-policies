@@ -1,0 +1,541 @@
+version: "1.1"
+description: >
+    Audit checklist for website privacy policies.
+    Based on the information requirements of the GDPR (Articles 13, 14, 8, 9 and 12) 
+    and EDPB guidelines. It covers only documentary disclosure criteria 
+    (what the document states), rather than external technical verification.
+    v1.1: Added C21–C24 (transparency, notification of changes, special categories of 
+    personal data under Article 9, and children's data under Article 8); expanded C20.
+
+scoring:
+  verdicts:
+    "YES":          1.0
+    "PARTIAL":        0.5
+    "NOT_STATED":     0.0
+    "NOT_APPLICABLE": null   # excluded from the mean calculation
+  aggregation: weighted_mean_per_category  # followed by the mean across categories
+
+categories:
+  - id: identity
+    name: Identidad y contacto
+    weight: 1.0
+  - id: purposes
+    name: Finalidad y base jurídica
+    weight: 1.0
+  - id: personal_data
+    name: Datos tratados
+    weight: 1.0
+  - id: recipients
+    name: Destinatarios y transferencias
+    weight: 1.0
+  - id: retention
+    name: Retención
+    weight: 1.0
+  - id: data_subject_rights
+    name: Derechos del interesado
+    weight: 1.0
+  - id: security
+    name: Seguridad y decisiones automatizadas
+    weight: 1.0
+  - id: transparency
+    name: Transparencia y accesibilidad
+    weight: 1.0
+
+criteria:
+
+  # ── IDENTITY AND CONTACT DETAILS ──────────────────────────────────────────
+  - id: C01
+    category: identity
+    name: Identidad del responsable
+    description: >
+      El documento identifica al responsable del tratamiento con
+      nombre, razón social u otra denominación inequívoca.
+    audit_question: >
+      ¿El documento identifica al responsable del tratamiento de datos?
+      Busca nombre de empresa, razón social, CIF o cualquier
+      denominación que permita identificar al responsable.
+    query_variants:
+      - "nombre empresa razón social responsable tratamiento datos"
+      - "quién es el responsable de tus datos identidad"
+    min_evidence: >
+      Al menos una mención al nombre o razón social del responsable.
+    weight: 1.0
+    tags: [rgpd_art13, rgpd_art14, identity]
+
+  - id: C02
+    category: identity
+    name: Datos de contacto del responsable
+    description: >
+      Se proporcionan datos de contacto del responsable (email,
+      dirección postal, formulario de contacto o teléfono).
+    audit_question: >
+      ¿El documento proporciona datos de contacto del responsable
+      del tratamiento (email, dirección, formulario o teléfono)?
+    query_variants:
+      - "email dirección postal teléfono contacto responsable"
+      - "cómo contactar con nosotros formulario escribir"
+    min_evidence: >
+      Al menos un medio de contacto directo con el responsable.
+    weight: 1.0
+    tags: [rgpd_art13, rgpd_art14, identity]
+
+  - id: C03
+    category: identity
+    name: Delegado de Protección de Datos (DPD/DPO)
+    description: >
+      Si existe DPD obligatorio o voluntario, el documento lo menciona
+      e indica cómo contactarle. Si no aplica, marcar NO_APLICA.
+    audit_question: >
+      ¿El documento menciona la figura del Delegado de Protección de Datos
+      (DPD o DPO) y proporciona sus datos de contacto?
+    query_variants:
+      - "delegado protección datos DPO DPD contacto"
+      - "oficina protección datos privacidad responsable privacidad"
+      - "Data Protection Officer contacto privacidad"
+      - "responsable de privacidad privacy officer contacto email DPO"
+      - "encargar privacidad datos oficial protección contactar"
+    min_evidence: >
+      Mención explícita al DPD/DPO con al menos un dato de contacto PROPIO del DPO
+      (nombre, email específico del DPO, o indicación expresa de que ese contacto
+      es para el DPO). ATENCIÓN: el email o dirección general de la empresa NO es
+      suficiente como contacto del DPO. Si solo se menciona que existe un DPO sin
+      datos de contacto propios, veredicto PARCIAL.
+    weight: 0.75
+    tags: [rgpd_art13, rgpd_art37, dpo]
+
+  # ── PURPOSES AND LAWFUL BASIS ─────────────────────────────────────────────
+  - id: C04
+    category: purposes
+    name: Finalidades del tratamiento
+    description: >
+      El documento declara para qué se usan los datos personales
+      (lista de finalidades o descripción clara).
+    audit_question: >
+      ¿El documento describe las finalidades o propósitos por los que
+      se tratan los datos personales del usuario?
+    query_variants:
+      - "para qué usamos tus datos finalidad propósito tratamiento"
+      - "objetivo uso datos personales servicios"
+    min_evidence: >
+      Al menos una finalidad descrita de forma comprensible.
+    weight: 1.0
+    tags: [rgpd_art13, purposes]
+
+  - id: C05
+    category: purposes
+    name: Base jurídica del tratamiento
+    description: >
+      Se indica la base jurídica de cada tratamiento o al menos
+      de los tratamientos principales (consentimiento, contrato,
+      interés legítimo, obligación legal, etc.).
+    audit_question: >
+      ¿El documento indica la base legal o jurídica que legitima
+      cada tratamiento de datos (consentimiento, contrato,
+      interés legítimo, obligación legal u otra)?
+    query_variants:
+      - "base legal jurídica legitimación tratamiento datos"
+      - "consentimiento contrato interés legítimo obligación legal"
+      - "fundamento jurídico amparamos tratamos datos"
+    min_evidence: >
+      Mención a al menos una base jurídica vinculada a un tratamiento.
+    weight: 1.0
+    tags: [rgpd_art13, rgpd_art6, lawful_basis]
+
+  - id: C06
+    category: purposes
+    name: Justificación del interés legítimo
+    description: >
+      Si se invoca el interés legítimo como base, el documento
+      explica cuál es ese interés y por qué prevalece.
+      Si no se invoca, marcar NO_APLICA.
+    audit_question: >
+      Si el documento invoca el interés legítimo como base jurídica,
+      ¿explica en qué consiste ese interés legítimo y por qué
+      prevalece sobre los derechos del interesado?
+    query_variants:
+      - "interés legítimo justificación en qué consiste"
+      - "intereses legítimos prevalece equilibrio ponderación derechos"
+    min_evidence: >
+      Descripción del interés legítimo concreto y mención a la
+      ponderación o equilibrio de intereses.
+    weight: 0.75
+    tags: [rgpd_art13, rgpd_art6f, legitimate_interest]
+
+  # ── PERSONAL DATA PROCESSED ───────────────────────────────────────────────
+  - id: C07
+    category: personal_data
+    name: Categorías de datos tratados
+    description: >
+      El documento especifica qué tipos o categorías de datos
+      personales se recogen y tratan.
+    audit_question: >
+      ¿El documento especifica las categorías o tipos de datos personales
+      que se tratan (nombre, email, IP, localización, etc.)?
+    query_variants:
+      - "tipos datos personales recogemos categorías información"
+      - "nombre email teléfono dirección IP localización datos recabados"
+    min_evidence: >
+      Lista o descripción de al menos una categoría de datos.
+    weight: 1.0
+    tags: [rgpd_art13, personal_data]
+
+  - id: C08
+    category: personal_data
+    name: Origen de los datos
+    description: >
+      Se indica si los datos proceden del propio interesado,
+      de terceros o se generan automáticamente.
+    audit_question: >
+      ¿El documento indica de dónde proceden los datos personales
+      (proporcionados por el usuario, obtenidos de terceros,
+      generados automáticamente, etc.)?
+    query_variants:
+      - "de dónde vienen los datos fuente origen procedencia"
+      - "datos recopilamos automáticamente terceros fuentes públicas"
+      - "información proporcionas generas cuando usas"
+    min_evidence: >
+      Al menos una referencia al origen o fuente de los datos.
+    weight: 0.75
+    tags: [rgpd_art14, data_source]
+
+  # ── RECIPIENTS AND TRANSFERS ──────────────────────────────────────────────
+  - id: C09
+    category: recipients
+    name: Destinatarios o categorías de destinatarios
+    description: >
+      Se identifican los terceros, encargados o categorías de
+      destinatarios con quienes se comparten los datos.
+    audit_question: >
+      ¿El documento identifica a los destinatarios o categorías de
+      destinatarios con quienes se comparten o ceden los datos
+      (terceros, partners, encargados del tratamiento, etc.)?
+    query_variants:
+      - "compartimos cedemos datos terceros destinatarios"
+      - "partners proveedores encargados tratamiento transferimos información"
+    min_evidence: >
+      Mención a al menos un destinatario, categoría o declaración
+      de que no se ceden datos a terceros.
+    weight: 1.0
+    tags: [rgpd_art13, recipients]
+
+  - id: C10
+    category: recipients
+    name: Transferencias internacionales
+    description: >
+      Si se realizan transferencias a terceros países u organizaciones
+      internacionales, el documento lo indica junto con las garantías
+      aplicables. Si no hay transferencias, marcar NO_APLICA.
+    audit_question: >
+      ¿El documento informa sobre transferencias internacionales de datos
+      (fuera del EEE) e indica las garantías aplicables
+      (decisión de adecuación, cláusulas contractuales, BCR, etc.)?
+    query_variants:
+      - "transferencias datos fuera España Europa EEE terceros países"
+      - "garantías cláusulas contractuales tipo adecuación servidores extranjero"
+      - "datos tratados otros países fuera Unión Europea"
+      - "servidores Estados Unidos nube cloud almacenamiento internacional"
+      - "Privacy Shield SCCs BCR transferencia internacional adecuación"
+      - "alojamos datos país tercero garantías protección"
+    min_evidence: >
+      Mención al país o zona de destino y a las garantías o base
+      jurídica de la transferencia.
+    weight: 1.0
+    tags: [rgpd_art13, rgpd_art46, international_transfers]
+
+  # ── RETENTION ─────────────────────────────────────────────────────────────
+  - id: C11
+    category: retention
+    name: Plazos de conservación
+    description: >
+      Se declaran los plazos durante los cuales se conservarán
+      los datos, o los criterios para determinarlos.
+    audit_question: >
+      ¿El documento indica durante cuánto tiempo se conservarán los
+      datos personales, o los criterios usados para determinar ese plazo?
+    query_variants:
+      - "durante cuánto tiempo conservamos guardamos datos plazo"
+      - "retención supresión borrado datos período tiempo años meses"
+      - "conservación mientras dure relación contractual necesario"
+    min_evidence: >
+      Un plazo concreto o un criterio claro para su determinación
+      (por ejemplo, "mientras dure la relación contractual").
+    weight: 1.0
+    tags: [rgpd_art13, retention, retention_period]
+
+  # ── DATA-SUBJECT RIGHTS ───────────────────────────────────────────────────
+  - id: C12
+    category: data_subject_rights
+    name: Derecho de acceso
+    description: >
+      El documento informa del derecho a obtener acceso a los
+      datos personales y explica cómo ejercerlo.
+    audit_question: >
+      ¿El documento informa al usuario de su derecho de acceso
+      a sus datos personales e indica cómo puede ejercerlo?
+    query_variants:
+      - "derecho acceso datos personales solicitar consultar"
+      - "acceder ver obtener copia información personal"
+    min_evidence: >
+      Mención al derecho de acceso y al menos un medio para ejercerlo.
+    weight: 1.0
+    tags: [rgpd_art13, rgpd_art15, data_subject_rights]
+
+  - id: C13
+    category: data_subject_rights
+    name: Derecho de rectificación
+    description: >
+      Se informa del derecho a rectificar datos inexactos o incompletos.
+    audit_question: >
+      ¿El documento informa al usuario de su derecho a rectificar
+      sus datos personales cuando sean inexactos o incompletos?
+    query_variants:
+      - "derecho rectificación datos inexactos incompletos corregir"
+      - "actualizar modificar corregir cambiar datos información personal"
+    min_evidence: >
+      Mención explícita al derecho de rectificación.
+    weight: 1.0
+    tags: [rgpd_art13, rgpd_art16, data_subject_rights]
+
+  - id: C14
+    category: data_subject_rights
+    name: Derecho de supresión (derecho al olvido)
+    description: >
+      Se informa del derecho a solicitar la eliminación de los datos.
+    audit_question: >
+      ¿El documento informa al usuario de su derecho a solicitar
+      la supresión de sus datos personales (derecho al olvido)?
+    query_variants:
+      - "derecho supresión cancelación derecho al olvido"
+      - "eliminar borrar datos cuenta solicitar eliminar información"
+    min_evidence: >
+      Mención explícita al derecho de supresión o cancelación.
+    weight: 1.0
+    tags: [rgpd_art13, rgpd_art17, data_subject_rights]
+
+  - id: C15
+    category: data_subject_rights
+    name: Derecho de portabilidad
+    description: >
+      Se informa del derecho a recibir los datos en formato
+      estructurado y transferirlos a otro responsable.
+    audit_question: >
+      ¿El documento informa al usuario de su derecho a la portabilidad
+      de sus datos (recibir sus datos en formato estructurado
+      y transferirlos a otro proveedor)?
+    query_variants:
+      - "derecho portabilidad datos formato estructurado"
+      - "exportar descargar copia datos transferir otro servicio proveedor"
+      - "recibir datos formato electrónico legible máquina interoperable"
+      - "derecho obtener datos personales copia transmitir responsable"
+      - "portabilidad: es tu derecho solicitarnos recibir datos"
+    min_evidence: >
+      Mención explícita al derecho de portabilidad.
+    weight: 0.75
+    tags: [rgpd_art13, rgpd_art20, data_subject_rights]
+
+  - id: C16
+    category: data_subject_rights
+    name: Derecho de oposición
+    description: >
+      Se informa del derecho a oponerse al tratamiento en
+      determinadas circunstancias (incluido marketing directo).
+    audit_question: >
+      ¿El documento informa al usuario de su derecho de oposición
+      al tratamiento de sus datos, especialmente para fines
+      de marketing directo?
+    query_variants:
+      - "derecho oposición tratamiento datos oponer"
+      - "oponerse marketing directo publicidad rechazar comunicaciones"
+      - "opt-out desuscribirse no recibir comunicaciones comerciales"
+      - "tienes derecho oponerte tratamiento información personal"
+      - "retirar oposición objeta al uso datos fines comerciales"
+    min_evidence: >
+      Mención explícita al derecho de oposición.
+    weight: 1.0
+    tags: [rgpd_art13, rgpd_art21, data_subject_rights]
+
+  - id: C17
+    category: data_subject_rights
+    name: Derecho a retirar el consentimiento
+    description: >
+      Si la base jurídica es el consentimiento, se informa del
+      derecho a retirarlo en cualquier momento sin efectos retroactivos.
+      Si no aplica consentimiento, marcar NO_APLICA.
+    audit_question: >
+      Si el tratamiento se basa en el consentimiento, ¿el documento
+      informa al usuario de su derecho a retirarlo en cualquier
+      momento y sin consecuencias retroactivas?
+    query_variants:
+      - "retirar revocar consentimiento en cualquier momento"
+      - "derecho retirar consentimiento sin efectos retroactivos"
+    min_evidence: >
+      Mención al derecho a retirar el consentimiento y su efecto.
+    weight: 1.0
+    tags: [rgpd_art13, rgpd_art7, consent]
+
+  - id: C18
+    category: data_subject_rights
+    name: Derecho a reclamar ante la autoridad de control
+    description: >
+      Se informa del derecho a presentar una reclamación ante
+      la autoridad de control competente (AEPD u otra).
+    audit_question: >
+      ¿El documento informa al usuario de su derecho a presentar
+      una reclamación ante la autoridad de control
+      (AEPD, CNIL, ICO u otra)?
+    query_variants:
+      - "reclamar queja autoridad control protección datos AEPD"
+      - "supervisión regulador denuncia autoridad supervisora"
+    min_evidence: >
+      Mención a la autoridad de control y al derecho a reclamar.
+    weight: 1.0
+    tags: [rgpd_art13, rgpd_art77, supervisory_authority]
+
+  # ── SECURITY AND AUTOMATED DECISION-MAKING ────────────────────────────────
+  - id: C19
+    category: security
+    name: Decisiones automatizadas y perfilado
+    description: >
+      Si se realizan decisiones automatizadas con efecto jurídico
+      o perfilado significativo, el documento lo informa e indica
+      la lógica aplicada y las consecuencias. Si no aplica,
+      marcar NO_APLICA.
+    audit_question: >
+      ¿El documento informa sobre la existencia de decisiones
+      automatizadas (incluido perfilado) que produzcan efectos
+      jurídicos o significativos sobre el usuario, indicando
+      la lógica aplicada y las consecuencias?
+    query_variants:
+      - "decisiones automatizadas perfilado efectos jurídicos significativos"
+      - "algoritmo análisis automático perfil usuario comportamiento"
+      - "sistemas automatizados elaboración perfil tratamiento automatizado"
+      - "no ser objeto decisión individual automatizada elaboración perfil"
+      - "sistema scoring recomendación automatizada consecuencias usuario"
+      - "inteligencia artificial análisis datos personalización automatizada"
+    min_evidence: >
+      Mención a decisiones automatizadas o perfilado con descripción
+      de la lógica y consecuencias para el interesado.
+    weight: 0.75
+    tags: [rgpd_art13, rgpd_art22, automated_decision_making]
+
+  - id: C20
+    category: security
+    name: Medidas de seguridad
+    description: >
+      El documento declara que se aplican medidas de seguridad
+      técnicas u organizativas para proteger los datos.
+    audit_question: >
+      ¿El documento menciona que se aplican medidas de seguridad
+      técnicas y/u organizativas para proteger los datos personales?
+    query_variants:
+      - "medidas seguridad técnicas organizativas protección datos"
+      - "cifrado encriptación seguridad proteger información acceso no autorizado"
+      - "copias de seguridad backup almacenamiento seguro recuperación datos"
+      - "control de acceso autenticación contraseña medidas protección"
+      - "formación personal empleados seguridad datos tratamiento"
+      - "protocolos seguridad plan seguridad infraestructura protección"
+    min_evidence: >
+      Al menos una mención genérica o específica a medidas
+      de seguridad implementadas.
+    weight: 0.75
+    tags: [rgpd_art32, security]
+
+  # ── TRANSPARENCY AND ACCESSIBILITY ────────────────────────────────────────
+  - id: C21
+    category: transparency
+    name: Lenguaje claro y accesible
+    description: >
+      El documento está redactado en un lenguaje conciso, transparente e
+      inteligible (Art. 12 RGPD), sin tecnicismos legales que impidan
+      su comprensión por un usuario no experto.
+    audit_question: >
+      ¿El documento utiliza un lenguaje claro, sencillo y comprensible
+      para un usuario sin conocimientos jurídicos? Valora si evita
+      jerga legal excesiva, usa frases cortas y está organizado de
+      forma que facilita la lectura.
+    query_variants:
+      - "lenguaje claro sencillo fácil entender comprensible usuario"
+      - "política escrita términos simples accesible no experto"
+      - "redacción simple transparente inteligible"
+    min_evidence: >
+      El texto de la política debe mostrar un esfuerzo explícito
+      por usar lenguaje no técnico; la ausencia total de explicaciones
+      o el uso exclusivo de terminología jurídica implica PARCIAL o NO_CONSTA.
+    weight: 0.75
+    tags: [rgpd_art12, transparency, readability]
+
+  - id: C22
+    category: transparency
+    name: Notificación de cambios en la política
+    description: >
+      El documento indica cómo se notificará al usuario cuando la
+      política de privacidad sea modificada (email, aviso en la web,
+      banner, etc.) y si los cambios requieren nuevo consentimiento.
+    audit_question: >
+      ¿El documento explica cómo se comunicarán al usuario las
+      modificaciones futuras de la política de privacidad?
+      Busca referencias a notificación por email, aviso en la web,
+      banner de aceptación o cualquier mecanismo de comunicación de cambios.
+    query_variants:
+      - "cambios modificaciones política privacidad notificación aviso"
+      - "actualizamos política informamos email web cuando cambie"
+      - "revisión política nueva versión comunicar usuario"
+      - "notificaremos cambios te avisaremos modificaciones privacidad"
+    min_evidence: >
+      Al menos un mecanismo de notificación de cambios mencionado.
+    weight: 0.75
+    tags: [rgpd_art12, transparency, policy_changes]
+
+  # ── SPECIAL-CATEGORY DATA AND CHILDREN ────────────────────────────────────
+  - id: C23
+    category: personal_data
+    name: Categorías especiales de datos (Art. 9)
+    description: >
+      Si se tratan datos de categorías especiales (salud, biométricos,
+      genéticos, origen racial/étnico, creencias, orientación sexual, etc.),
+      el documento lo declara explícitamente e indica la base reforzada
+      que lo justifica. Si no se tratan, marcar NO_APLICA.
+    audit_question: >
+      ¿El documento declara el tratamiento de datos de categorías especiales
+      (datos de salud, biométricos, genéticos, origen racial o étnico,
+      creencias religiosas, orientación sexual) e indica la base jurídica
+      reforzada que lo permite (consentimiento explícito, interés vital, etc.)?
+    query_variants:
+      - "datos salud médicos biométricos genéticos categorías especiales"
+      - "origen racial étnico creencias religiosas orientación sexual datos sensibles"
+      - "tratamiento datos sensibles consentimiento explícito interés vital"
+      - "datos especialmente protegidos categoría especial base reforzada"
+    min_evidence: >
+      Se requieren DOS condiciones simultáneas: (1) declaración explícita de que
+      se tratan datos de categorías especiales, Y (2) al menos una base jurídica
+      reforzada del Art. 9.2 RGPD mencionada (consentimiento explícito, interés
+      vital, obligación laboral, etc.). ATENCIÓN: encontrar datos especiales en
+      una lista genérica de posibles categorías sin declarar que efectivamente
+      se tratan, o sin base jurídica reforzada asociada, es veredicto PARCIAL,
+      no SI.
+    weight: 1.0
+    tags: [rgpd_art9, special_category_data, special_categories]
+
+  - id: C24
+    category: personal_data
+    name: Tratamiento de datos de menores
+    description: >
+      El documento declara su postura sobre el tratamiento de datos
+      de menores de 16 años: si el servicio no está dirigido a menores,
+      si requiere consentimiento parental, o las medidas adoptadas
+      para garantizar el Art. 8 RGPD.
+    audit_question: >
+      ¿El documento indica si el servicio está dirigido o no a menores
+      de 16 años, y en su caso cómo gestiona el consentimiento parental
+      o la verificación de edad (Art. 8 RGPD)?
+    query_variants:
+      - "menores edad menores 16 18 años servicio dirigido niños"
+      - "consentimiento parental padres tutores menor edad verificación"
+      - "no dirigido menores no recopilamos datos niños"
+      - "edad mínima menor edad consentimiento padres tutores"
+    min_evidence: >
+      Cualquier mención explícita a menores de edad, ya sea para
+      restringir el servicio, requerir consentimiento parental o
+      declarar que no se dirige a este colectivo.
+    weight: 0.75
+    tags: [rgpd_art8, children, parental_consent]
